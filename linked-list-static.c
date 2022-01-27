@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 
 int mainMenu(void);
 struct Node *initializeList(size_t size);
@@ -19,14 +20,15 @@ void printList(struct Node *list);
 const size_t SIZE = 10;
 
 struct Node {
+    bool free;
     int data;
-    int next;
+    size_t next;
 };
 
 int main(void) {
     struct Node *list;
 
-    while (1) {
+    while (true) {
         switch (mainMenu()) {
             case '1':
                 if (list) {
@@ -80,6 +82,7 @@ struct Node *initializeList(size_t size) {
     for (size_t i = 0; i < size; ++i) {
         list[i].data = 0;
         list[i].next = 0;
+        list[i].free = true;
     }
 
     printf("Lista inicializada com sucesso!\n");
@@ -90,7 +93,7 @@ struct Node *initializeList(size_t size) {
 
 void printList(struct Node *list) {
     for (size_t i = 0; i < SIZE; ++i) {
-        printf("  - Posicao: %02ld,  Valor: %03d,  Proximo: %02d\n",
+        printf("  - Posicao: %02ld,  Valor: %03d,  Proximo: %02ld\n",
                 i, list[i].data, list[i].next);
     }
 }
