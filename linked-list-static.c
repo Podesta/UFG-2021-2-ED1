@@ -17,6 +17,7 @@ int mainMenu(void);
 struct Node *initializeList(size_t size);
 void printList(struct Node *list);
 void addNode(struct Node *list);
+void removeNode(struct Node *list);
 
 const size_t SIZE = 10;
 
@@ -45,6 +46,10 @@ int main(void) {
                 printf("Lista nao inicializada!\n");
             break;
         case '3':
+            if (list)
+                removeNode(list);
+            else
+                printf("Lista nao inicializada!\n");
             break;
         case '4':
             if (list)
@@ -122,6 +127,7 @@ void addNode(struct Node *list) {
         if (!list[i].free && !checkNext) {  // Check next on loop check.
             next = i;                       // could be swapped with break;
             checkNext = true;
+            break;
         }
     }
 
@@ -134,6 +140,7 @@ void addNode(struct Node *list) {
         if (!list[i].free && !checkPrev) {
             prev = i;
             checkPrev = true;
+            break;
         }
     }
 
@@ -145,4 +152,52 @@ void addNode(struct Node *list) {
         list[prev].next = position;
 
     printf("Elemento adicionado na posicao %zu com sucesso!\n", position);
+}
+
+
+void removeNode(struct Node *list) {
+    size_t position;    // User input
+    size_t next;        // Check next non free element on list
+    size_t prev;        // Check previous non free element on list
+    bool checkNext = false;
+    bool checkPrev = false;
+
+    printf("Informe a posicao para excluir o elemento (0 a %zu): ", SIZE - 1);
+    scanf("%zu", &position);
+    while (getchar() != '\n');
+
+    // Check if element is already free
+    if (list[position].free) {
+        printf("Elemento na posicao %zu ja esta limpo.\n", position);
+        return;
+    }
+
+    for (size_t i = position + 1; position < SIZE; ++i) {
+        if (!list[i].free && !checkNext) {
+            next = i;
+            checkNext = true;
+            break;
+        }
+    }
+
+    for (size_t i = position - 1; i < SIZE_MAX; --i) {
+        if (!list[i].free && !checkPrev) {
+            prev = i;
+            checkPrev = true;
+            break;
+        }
+    }
+
+    if (checkPrev) {
+        if (checkNext)
+            list[prev].next = next;
+        else
+            list[prev].next = 0;
+    }
+
+    list[position].data = 0;
+    list[position].free = true;
+    list[position].next = 0;
+
+    printf("Elemento removido da posicao %zu com sucesso!\n", position);
 }
