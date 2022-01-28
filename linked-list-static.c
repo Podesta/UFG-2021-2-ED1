@@ -58,6 +58,8 @@ int main(void) {
                 printf("Lista nao inicializada!\n");
             break;
         case '9':
+            if (list)
+                free(list);
             return 0;
             break;
         }
@@ -69,11 +71,11 @@ int main(void) {
 int mainMenu(void) {
     int input;
 
-    printf("\n1 - Inicializar a lista estática"
-           "\n2 - Incluir elementos na lista estática"
-           "\n3 - Excluir elementos da lista estática"
-           "\n4 - Exibir todos os elementos da lista estática"
-           "\n9 - Finalizar\n\n");
+    printf("\n   1 - Inicializar a lista estática"
+           "\n   2 - Incluir elementos na lista estática"
+           "\n   3 - Excluir elementos da lista estática"
+           "\n   4 - Exibir todos os elementos da lista estática"
+           "\n   9 - Finalizar\n\n");
 
     do {
         input = getchar();
@@ -102,8 +104,11 @@ struct Node *initializeList(size_t size) {
 
 void printList(struct Node *list) {
     for (size_t i = 0; i < SIZE; ++i) {
-        printf("  - Posicao: %02zu,  Valor: %03d,  Proximo: %02zu\n",
-                i, list[i].data, list[i].next);
+        printf(" - Posicao: %02zu, ", i);
+        if (list[i].free)
+            printf("Valor: ---, Proximo: --\n");
+        else
+            printf("Valor: %03d, Proximo: %02zu\n", list[i].data, list[i].next);
     }
 }
 
@@ -172,7 +177,7 @@ void removeNode(struct Node *list) {
         return;
     }
 
-    for (size_t i = position + 1; position < SIZE; ++i) {
+    for (size_t i = position + 1; i < SIZE; ++i) {
         if (!list[i].free && !checkNext) {
             next = i;
             checkNext = true;
