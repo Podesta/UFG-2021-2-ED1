@@ -1,5 +1,4 @@
 /*******************************************************************************
- *
  * File name     : linked-list-static.c
  * Author        : Podesta
  * Date          : January 2022
@@ -12,10 +11,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <stdint.h>
 
 int mainMenu(void);
 struct Node *initializeList(size_t size);
 void printList(struct Node *list);
+void addNode(struct Node *list);
 
 const size_t SIZE = 10;
 
@@ -30,27 +31,30 @@ int main(void) {
 
     while (true) {
         switch (mainMenu()) {
-            case '1':
-                if (list) {
-                    //printf("lista: %p", (void *)list);
-                    free(list);
-                }
-                list = initializeList(SIZE);
-                break;
-            case '2':
-                break;
-            case '3':
-                break;
-            case '4':
-                if (list) {
-                    printList(list);
-                } else {
-                    printf("Lista nao inicializada!\n");
-                }
-                break;
-            case '9':
-                return 0;
-                break;
+        case '1':
+            if (list) {
+                //printf("lista: %p", (void *)list);
+                free(list);
+            }
+            list = initializeList(SIZE);
+            break;
+        case '2':
+            if (list)
+                addNode(list);
+            else
+                printf("Lista nao inicializada!\n");
+            break;
+        case '3':
+            break;
+        case '4':
+            if (list)
+                printList(list);
+            else
+                printf("Lista nao inicializada!\n");
+            break;
+        case '9':
+            return 0;
+            break;
         }
     }
 
@@ -93,7 +97,52 @@ struct Node *initializeList(size_t size) {
 
 void printList(struct Node *list) {
     for (size_t i = 0; i < SIZE; ++i) {
-        printf("  - Posicao: %02ld,  Valor: %03d,  Proximo: %02ld\n",
+        printf("  - Posicao: %02zu,  Valor: %03d,  Proximo: %02zu\n",
                 i, list[i].data, list[i].next);
     }
+}
+
+
+void addNode(struct Node *list) {
+    int data;           // User input
+    size_t position;    // User input
+    size_t next;        // Check next non free element on list
+    size_t prev;        // Check previous non free element on list
+    bool checkNext = false;
+    bool checkPrev = false;
+
+    printf("Informe a posicao para incluir o elemento (0 a %zu): ", SIZE - 1);
+    scanf("%zu", &position);
+    printf("Informe o valor do elemento: ");
+    scanf("%d", &data);
+    while (getchar() != '\n');
+
+    // Get next - This and previous could possibly be split into own function
+    for (size_t i = position + 1; i < SIZE; ++i) {
+        if (!list[i].free && !checkNext) {  // Check next on loop check.
+            next = i;                       // could be swapped with break;
+            checkNext = true;
+        }
+    }
+
+    // Get previous
+    // size_t can not be negative. So instead of checking when it reaches
+    // a value smaller than 0, we check if the position is smaller than the
+    // maximum allowed value for size_t minus 1. When it woudl reach -1 it
+    // flips and reaches the maximum value instead;
+    for (size_t i = position - 1; i < SIZE_MAX; --i) {
+        if (!list[i].free && !checkPrev) {
+            prev = i;
+            checkPrev = true;
+        }
+    }
+
+    list[position].data = data;
+    list[position].free = false;
+    if (checkNext)
+        list[position].next = next;
+    if (checkPrev)
+        list[prev].next = position;
+
+    printf("Elemento adicionado na posicao %zu com sucesso!\n", position);
 }
