@@ -32,6 +32,7 @@ int getData(void);
 void addNode(struct Header *header, int data);
 void printList(struct Header *header);
 int printListHelper(struct Node *node);
+void printSingleNode(struct Node *node);
 int nodeHeight(struct Node *node, int *counter);
 int nodeDepth(struct Node *node, struct Node *target, int *counter);
 bool checkAscending(struct Node *node);
@@ -74,13 +75,23 @@ int main (void) {
             if (!foundNode) {
                 printf("\nData not present in list.\n");
             } else {
-                printf("\n%p\n", (void*)foundNode);
+                int height = 0;
+                int depth = 0;
+                nodeHeight(foundNode, &height);
+                nodeDepth(header.first, foundNode, &depth);
+                printf("\nDepth: %4d / Height: %4d", depth, height);
+                printSingleNode(foundNode);
             }
             break; }
         case '6': {
+            int height = 0;
+            int depth = 0;
             struct Node *currMin = header.first;
             minNode(header.first->next, &currMin);  // Pointer to pointer,
-            printf("\n%p\n", (void*)currMin);       // pass address with &
+            nodeHeight(currMin, &height);
+            nodeDepth(header.first, currMin, &depth);
+            printf("\nDepth: %4d / Height: %4d", depth, height);
+            printSingleNode(currMin);
             break; }
         case '9':
             printList(&header);
@@ -162,6 +173,12 @@ int printListHelper(struct Node *node) {
     }
 
     return 0;
+}
+
+void printSingleNode(struct Node *node) {
+    printf("\nData: %5d / Addr: %14p / Prev: %14p / Next: %14p\n", node->data,
+            (void*)node, (void*)node->prev, (void*)node->next);
+    return;
 }
 
 int nodeHeight(struct Node *node, int *counter) {
