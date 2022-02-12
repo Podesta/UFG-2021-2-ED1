@@ -228,3 +228,17 @@ int minNode(struct Node *node, struct Node **currMin) {
 
     return 0;
 }
+
+bool checkEqual(struct Node *node1, struct Node *node2) {
+    if (node1->data != node2->data)
+        return false;
+
+    if (node1->next != NULL && node2->next != NULL)
+        return checkEqual(node1->next, node2->next);
+
+    if ((node1->next != NULL && node2->next == NULL) ||
+        (node1->next == NULL && node2->next != NULL))
+        return false;
+
+    return true;
+}
