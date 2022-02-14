@@ -26,21 +26,33 @@ struct Node {
 };
 
 int mainMenu(void);
-void addNonde(struct Node first, int idNumber, char *name);
+void addNonde(struct Node *first);
+int printAll(struct Node *node);
 
 int main(void) {
+    struct Node *first = malloc(sizeof(struct Node));
+    first->idNumber = 0;
+    first->name = NULL;
+    first->next = NULL;
+    first->prev = NULL;
 
     while (true) {
         switch(mainMenu()) {
             case '1':
+                addNonde(first);
                 break;
             case '2':
                 break;
             case '3':
                 break;
             case '4':
+                if (first->next)
+                    printAll(first->next);
+                else
+                    printf("There are no students in the list.\n");
                 break;
             case '0':
+                free(first);
                 return 0;
         }
     }
@@ -65,4 +77,47 @@ int mainMenu(void) {
              (input != '3') && (input != '4'));
 
     return input;
+}
+
+
+void addNonde(struct Node *first) {
+    struct Node *node = malloc(sizeof(struct Node));
+    int idNumber;
+    char *name = NULL;
+    size_t len = 0;     // Without a pointer for len, getline fails;
+
+    // Get last node in the list
+    while (first->next != NULL)
+        first = first->next;
+
+    // Get input
+    printf("Enter name of student: ");
+    long size = getline(&name, &len, stdin);
+    name[size - 1] = '\0';      // Remove newline from name
+    do {
+        printf("Enter id number of student: ");
+        scanf("%d", &idNumber);
+        while (getchar() != '\n');  // Clear input buffer
+    } while (idNumber <= 0);
+
+    node->idNumber = idNumber;
+    node->name = name;
+    node->next = NULL;
+    node->prev = first;
+
+    first->next = node;
+}
+
+
+int printAll(struct Node *node) {
+    printf("Name: %s\n", node->name);
+    printf("Id number: %d\n", node->idNumber);
+    printf("Prev: %p  //  Addr: %p  //  Next: %p\n",
+            (void*)node->prev, (void*)node, (void*)node->next);
+    printf("----------\n");
+
+    if (node->next != NULL)
+        return printAll(node->next);
+
+    return 0;
 }
