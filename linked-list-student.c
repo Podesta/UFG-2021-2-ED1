@@ -7,7 +7,7 @@
  * Description   : Program to implement a student attendance list. The list
  *                 should contain student id number as an int, and the student
  *                 name. It must have functions to insert students, search,
- *                 both by id number and name, and list all the students.
+ *                 by id number and by position, and list all the students.
  ******************************************************************************/
 
 #include <stdio.h>
@@ -28,6 +28,9 @@ struct Node {
 int mainMenu(void);
 void addNonde(struct Node *first);
 int printAll(struct Node *node);
+void printSingle(struct Node *node);
+struct Node *searchById(struct Node *node, int idNumber);
+struct Node *searchByPosition(struct Node *node, int *position);
 
 int main(void) {
     struct Node *first = malloc(sizeof(struct Node));
@@ -41,10 +44,28 @@ int main(void) {
             case '1':
                 addNonde(first);
                 break;
-            case '2':
-                break;
-            case '3':
-                break;
+            case '2': {
+                int id;
+                printf("Enter student id to search: ");
+                scanf("%d", &id);
+                while (getchar() != '\n');
+                struct Node *found = searchById(first->next, id);
+                if (found)
+                    printSingle(found);
+                else
+                    printf("No student with id #%d on the list.\n", id);
+                break; }
+            case '3': {
+                int pos;
+                printf("Enter position to find on the list: ");
+                scanf("%d", &pos);
+                while (getchar() != '\n');
+                struct Node *found = searchByPosition(first->next, &pos);
+                if (found)
+                    printSingle(found);
+                else
+                    printf("There are no students at specicied position.\n");
+                break; }
             case '4':
                 if (first->next)
                     printAll(first->next);
@@ -110,14 +131,41 @@ void addNonde(struct Node *first) {
 
 
 int printAll(struct Node *node) {
-    printf("Name: %s\n", node->name);
-    printf("Id number: %d\n", node->idNumber);
-    printf("Prev: %p  //  Addr: %p  //  Next: %p\n",
-            (void*)node->prev, (void*)node, (void*)node->next);
-    printf("----------\n");
+    printSingle(node);
 
     if (node->next != NULL)
         return printAll(node->next);
 
     return 0;
+}
+
+
+void printSingle(struct Node *node) {
+    printf("Name: %s\n", node->name);
+    printf("Id number: %d\n", node->idNumber);
+    printf("Prev: %p  //  Addr: %p  //  Next: %p\n",
+            (void*)node->prev, (void*)node, (void*)node->next);
+    printf("----------\n");
+}
+
+
+struct Node *searchById(struct Node *node, int idNumber) {
+    if (node->idNumber == idNumber)
+        return node;
+    else if (node->next != NULL)
+        return searchById(node->next, idNumber);
+    else
+        return NULL;
+}
+
+
+struct Node *searchByPosition(struct Node *node, int *position) {
+    if (*position == 0) {
+        return node;
+    } else if (node->next != NULL) {
+        --(*position);
+        return searchByPosition(node->next, position);
+    } else {
+        return NULL;
+    }
 }
