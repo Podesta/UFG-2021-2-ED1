@@ -1,5 +1,5 @@
 /*******************************************************************************
- * File name     : linked-list-dynamic.c
+ * File name     : search-binary.c
  * Author        : Podesta
  * Date          : March 2022
  * Version       : 1.0
