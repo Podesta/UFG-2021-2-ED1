@@ -1,4 +1,3 @@
-
 /*******************************************************************************
  * File name     : linked-list-dynamic.c
  * Author        : Podesta
@@ -12,8 +11,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+int binarySearch(int arr[], int beg, int end, int target);
+
 int main(void) {
     int size = 0;
+    int target = 0;
 
     printf("\nDetermine the size of the array: ");
     scanf("%d", &size);
@@ -29,8 +31,31 @@ int main(void) {
 
         arr[i] = digit;
     }
-
     for (int i = 0; i < size; ++i)
         printf("%d ", arr[i]);
 
+    printf("\n\nEnter element to be searched: ");
+    scanf("%d", &target);
+
+    int found = binarySearch(arr, 0, size - 1, target);
+    if (found == -1)
+        printf("\n\nElement not present on array.\n");
+    else
+        printf("\n\nFound element on position %d.\n", found);
+}
+
+int binarySearch(int arr[], int beg, int end, int target) {
+    int size = end - beg;
+    int middle = beg + (size / 2);
+    printf("\nbeg: %d // middle: %d // end: %d", beg, middle, end);
+    
+    if (size < 0)
+        return -1;
+
+    if (arr[middle] == target)
+        return middle;
+    else if (target < arr[middle])
+        return binarySearch(arr, beg, middle - 1, target);
+    else
+        return binarySearch(arr, middle + 1, end, target);
 }
