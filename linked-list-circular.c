@@ -26,6 +26,8 @@ struct Header {
 
 int mainMenu(void);
 void createNode(struct Header *header);
+struct Node *findNode(struct Header *header, struct Node *node, int target);
+void printSingleNode(struct Node *node);
 
 int main(void) {
     struct Header header = {
@@ -38,8 +40,17 @@ int main(void) {
         case'1':
             createNode(&header);
             break;
-        case '2':
-            break;
+        case '2': {
+            int target;
+            printf("Enter data of node to be printed: ");
+            scanf("%d", &target);
+            while (getchar() != '\n');
+            struct Node *found = findNode(&header, header.first, target);
+            if (found)
+                printSingleNode(found);
+            else
+                printf("No node with provided data present on list.\n");
+            break; }
         case '3':
             break;
         case '4':
@@ -86,8 +97,8 @@ void createNode(struct Header *header) {
 
     if (header -> first == NULL) {
         node->data = data;
-        node->prev = NULL;
-        node->next = NULL;
+        node->prev = node;
+        node->next = node;
         header->first = node;
         header->last = node;
     } else {
@@ -102,3 +113,16 @@ void createNode(struct Header *header) {
     printf("\nNode created with success!\n");
 }
 
+struct Node *findNode(struct Header *header, struct Node *node, int target) {
+    if (node->data == target)
+        return node;
+    else if (header->last != node)
+        return findNode(header, node->next, target);
+    else
+        return NULL;
+}
+
+void printSingleNode(struct Node *node) {
+    printf("\nData: %4d / Addr: %14p / Prev: %14p / Next %14p\n", node->data,
+            (void*)node, (void*)node->prev, (void*)node->next);
+}
