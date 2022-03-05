@@ -30,6 +30,7 @@ struct Node *findNode(struct Header *header, struct Node *node, int target);
 void printSingleNode(struct Node *node);
 void updateNode(struct Node *node);
 void deleteNode(struct Header *header, struct Node *node);
+int printAllNodes(struct Header *header, struct Node *node);
 
 int main(void) {
     struct Header header = {
@@ -76,6 +77,8 @@ int main(void) {
                 printf("No node with provided data present on list.\n");
             break; }
         case '9':
+            if (header.first)
+                printAllNodes(&header, header.first);
             break;
         case '0':
             return 0;
@@ -134,6 +137,8 @@ void createNode(struct Header *header) {
 }
 
 struct Node *findNode(struct Header *header, struct Node *node, int target) {
+    if (node == NULL)
+        return NULL;
     if (node->data == target)
         return node;
     else if (header->last != node)
@@ -143,7 +148,7 @@ struct Node *findNode(struct Header *header, struct Node *node, int target) {
 }
 
 void printSingleNode(struct Node *node) {
-    printf("\nData: %4d / Addr: %14p / Prev: %14p / Next %14p\n", node->data,
+    printf("Data: %4d / Addr: %14p / Prev: %14p / Next %14p\n", node->data,
             (void*)node, (void*)node->prev, (void*)node->next);
 }
 
@@ -159,6 +164,12 @@ void updateNode(struct Node *node) {
 }
 
 void deleteNode(struct Header *header, struct Node *node) {
+    if (header->first == node && header->last == node) {
+        header->first = NULL;
+        header->last = NULL;
+        return;
+    }
+
     if (header->first == node)
         header->first = node->next;
     if (header->last == node)
@@ -169,4 +180,13 @@ void deleteNode(struct Header *header, struct Node *node) {
 
     printf("Node with address %p successfully removed\n", (void*)node);
     free(node);
+}
+
+int printAllNodes(struct Header *header, struct Node *node) {
+    printSingleNode(node);
+
+    if (header->last == node)
+        return 0;
+    else
+        return printAllNodes(header, node->next);
 }
