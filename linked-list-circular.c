@@ -29,6 +29,7 @@ void createNode(struct Header *header);
 struct Node *findNode(struct Header *header, struct Node *node, int target);
 void printSingleNode(struct Node *node);
 void updateNode(struct Node *node);
+void deleteNode(struct Header *header, struct Node *node);
 
 int main(void) {
     struct Header header = {
@@ -63,8 +64,17 @@ int main(void) {
             else
                 printf("No node with provided data present on list.\n");
             break; }
-        case '4':
-            break;
+        case '4': {
+            int target;
+            printf("Enter data of node to be deleted: ");
+            scanf("%d", &target);
+            while (getchar() != '\n');
+            struct Node *found = findNode(&header, header.first, target);
+            if (found)
+                deleteNode(&header, found);
+            else
+                printf("No node with provided data present on list.\n");
+            break; }
         case '9':
             break;
         case '0':
@@ -146,4 +156,17 @@ void updateNode(struct Node *node) {
     node->data = newData;
     printf("Data of node with address %p successfully updated to %d.\n",
             (void*)node, node->data);
+}
+
+void deleteNode(struct Header *header, struct Node *node) {
+    if (header->first == node)
+        header->first = node->next;
+    if (header->last == node)
+        header->last = node->prev;
+
+    node->prev->next = node->next;
+    node->next->prev = node->prev;
+
+    printf("Node with address %p successfully removed\n", (void*)node);
+    free(node);
 }
